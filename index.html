@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoveenShare — شارك الفيديو مجاناً</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --border: #2a2a3a;
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --success: #4ade80;
+    --warning: #fbbf24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 50% at 20% 20%, rgba(108,99,255,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(255,101,132,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    animation: fadeDown 0.6s ease;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .logo-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 0 30px rgba(108,99,255,0.4);
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .tagline {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-top: 0.25rem;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.75rem;
+    margin-bottom: 1.25rem;
+    animation: fadeUp 0.5s ease both;
+    transition: border-color 0.3s;
+  }
+
+  .card:hover { border-color: rgba(108,99,255,0.3); }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text);
+  }
+
+  .step-badge {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    width: 100%;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #8b83ff);
+    color: white;
+    box-shadow: 0 4px 20px rgba(108,99,255,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(108,99,255,0.4);
+  }
+
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background: var(--border);
+    transform: translateY(-1px);
+  }
+
+  .btn-success {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    box-shadow: 0 4px 20px rgba(34,197,94,0.3);
+  }
+
+  .btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(34,197,94,0.4);
+  }
+
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  /* Input */
+  .input-group {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    text-align: right;
+  }
+
+  input[type="text"]:focus { border-color: var(--accent); }
+  input[type="text"]::placeholder { color: var(--muted); }
+
+  /* File Drop */
+  .file-drop {
+    border: 2px dashed var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--surface2);
+    position: relative;
+  }
+
+  .file-drop:hover, .file-drop.drag-over {
+    border-color: var(--accent);
+    background: rgba(108,99,255,0.05);
+  }
+
+  .file-drop input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .file-drop-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .file-drop p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .file-drop .highlight { color: var(--accent); font-weight: 700; }
+
+  /* Status */
+  .status-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--muted);
+  }
+
+  .status-dot.connected { background: var(--success); box-shadow: 0 0 8px var(--success); animation: pulse 2s infinite; }
+  .status-dot.waiting { background: var(--warning); box-shadow: 0 0 8px var(--warning); animation: pulse 1.5s infinite; }
+  .status-dot.error { background: var(--accent2); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Code Box */
+  .code-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    word-break: break-all;
+    margin: 0.75rem 0;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    text-align: left;
+    direction: ltr;
+  }
+
+  .code-box:hover { border-color: var(--accent); }
+
+  .copy-hint {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-family: 'Cairo', sans-serif;
+  }
+
+  /* Progress */
+  .progress-wrap {
+    background: var(--surface2);
+    border-radius: 99px;
+    height: 8px;
+    margin-top: 1rem;
+    overflow: hidden;
+    display: none;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* Video */
+  video {
+    width: 100%;
+    border-radius: 14px;
+    background: #000;
+    margin-top: 1rem;
+    display: none;
+    max-height: 400px;
+  }
+
+  /* Info boxes */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .info-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 0.75rem;
+    text-align: center;
+  }
+
+  .info-item .info-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+  .info-item .info-label { font-size: 0.75rem; color: var(--muted); }
+  .info-item .info-value { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-top: 0.2rem; }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:nth-child(1) { animation-delay: 0.1s; }
+  .card:nth-child(2) { animation-delay: 0.2s; }
+  .card:nth-child(3) { animation-delay: 0.3s; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    z-index: 999;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 0.25rem;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 0.6rem;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab.active {
+    background: var(--accent);
+    color: white;
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* File info */
+  .file-info {
+    display: none;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-top: 0.75rem;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .file-info.show { display: flex; }
+  .file-emoji { font-size: 2rem; }
+  .file-details { flex: 1; }
+  .file-name { font-weight: 700; font-size: 0.9rem; word-break: break-all; }
+  .file-size { color: var(--muted); font-size: 0.8rem; margin-top: 0.2rem; }
+
+  @media (max-width: 500px) {
+    .info-grid { grid-template-columns: repeat(3, 1fr); }
+    h1 { font-size: 1.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast">✅ تم النسخ!</div>
+
+<div class="container">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🎬</div>
+      <h1>NoveenShare</h1>
+    </div>
+    <p class="tagline">شارك أي فيديو مع صديقك مجاناً وبجودة أصلية — بدون حدود</p>
+  </header>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('send')">📤 إرسال فيديو</button>
+    <button class="tab" onclick="switchTab('receive')">📥 استقبال فيديو</button>
+  </div>
+
+  <!-- SEND TAB -->
+  <div class="tab-content active" id="tab-send">
+
+    <!-- Step 1: File -->
+    <div class="card">
+      <div class="card-title">
+        <div class="step-badge">1</div>
+        اختر الفيديو اللي تريد ترسله
+      </div>
+
+      <div class="file-drop" id="fileDrop">
+        <input type="file" id="fileInput" accept="video/*">
+        <span class="file-drop-icon">🎥</span>
+        <p>
+          <span class="highlight">اضغط هنا</span> أو اسحب الفيديو<br>
+          <small>MP4، MKV، MOV، WEBM — بدون حد للحجم</small>
+        </p>
+      </div>
+
+      <div class="file-info" id="fileInfo">
+        <div class="file-emoji">🎬</div>
+        <div class="file-details">
+          <div class="file-name" id="fileName">—</div>
+          <div class="file-size" id="fileSize">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Connect -->
+    <div class="card">
+      <div class="card-title">
+        <div class="step-badge">2</div>
+        تواصل مع صديقك
+      </div>
+
+      <button class="btn btn-primary" id="createOfferBtn" onclick="createOffer()" disabled>
+        🔗 إنشاء رابط التواصل
+      </button>
+
+      <div id="offerSection" style="display:none; margin-top:1rem;">
+        <p style="color:var(--muted); font-size:0.85rem; margin-bottom:0.5rem;">📋 أرسل هذا الكود لصديقك عبر واتساب أو ديسكورد:</p>
+        <div class="code-box" id="offerCode" onclick="copyOffer()">
+          <span class="copy-hint">اضغط للنسخ</span>
+          <span id="offerText">جاري الإنشاء...</span>
+        </div>
+
+        <p style="color:var(--muted); font-size:0.85rem; margin: 1rem 0 0.5rem;">📨 الصق كود الرد من صديقك هنا:</p>
+        <div class="input-group">
+          <input type="text" id="answerInput" placeholder="الصق كود الرد هنا...">
+          <button class="btn btn-success" style="width:auto; padding:0.75rem 1.25rem;" onclick="connectWithAnswer()">✅</button>
+        </div>
+      </div>
+
+      <div class="status-box" id="senderStatus">
+        <div class="status-dot" id="senderDot"></div>
+        <span id="senderStatusText">في انتظار اختيار ملف...</span>
+      </div>
+    </div>
+
+    <!-- Step 3: Send -->
+    <div class="card">
+      <div class="card-title">
+        <div class="step-badge">3</div>
+        أرسل الفيديو
+      </div>
+
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <p id="progressText" style="color:var(--muted); font-size:0.85rem; text-align:center; margin-top:0.5rem; display:none;"></p>
+
+      <button class="btn btn-primary" id="sendBtn" onclick="sendFile()" disabled style="margin-top:0.75rem;">
+        🚀 إرسال الفيديو
+      </button>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-icon">⚡</div>
+          <div class="info-label">الاتصال</div>
+          <div class="info-value">مباشر</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">🔒</div>
+          <div class="info-label">التشفير</div>
+          <div class="info-value">E2E</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">♾️</div>
+          <div class="info-label">الحجم</div>
+          <div class="info-value">بلا حدود</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RECEIVE TAB -->
+  <div class="tab-content" id="tab-receive">
+
+    <div class="card">
+      <div class="card-title">
+        <div class="step-badge">1</div>
+        الصق كود صديقك هنا
+      </div>
+
+      <input type="text" id="offerInput" placeholder="الصق الكود اللي أرسله لك صديقك..." style="width:100%;">
+
+      <button class="btn btn-primary" onclick="createAnswer()" style="margin-top:0.75rem;">
+        📡 الاتصال بصديقك
+      </button>
+
+      <div id="answerSection" style="display:none; margin-top:1rem;">
+        <p style="color:var(--muted); font-size:0.85rem; margin-bottom:0.5rem;">📋 أرسل هذا الكود لصديقك:</p>
+        <div class="code-box" id="answerCode" onclick="copyAnswer()">
+          <span class="copy-hint">اضغط للنسخ</span>
+          <span id="answerText">جاري الإنشاء...</span>
+        </div>
+      </div>
+
+      <div class="status-box" id="receiverStatus">
+        <div class="status-dot" id="receiverDot"></div>
+        <span id="receiverStatusText">في انتظار كود صديقك...</span>
+      </div>
+    </div>
+
+    <div class="card" id="videoCard">
+      <div class="card-title">
+        <div class="step-badge">2</div>
+        الفيديو الوارد
+      </div>
+      <p style="color:var(--muted); font-size:0.9rem;">بعد الاتصال، الفيديو سيظهر هنا تلقائياً وتقدر تحمّله 👇</p>
+      <video id="receivedVideo" controls></video>
+      <button class="btn btn-success" id="downloadBtn" style="margin-top:0.75rem; display:none;" onclick="downloadVideo()">
+        ⬇️ تحميل الفيديو
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// ============ STATE ============
+let pc_sender = null;
+let pc_receiver = null;
+let selectedFile = null;
+let receivedChunks = [];
+let receivedFileName = '';
+let receivedFileSize = 0;
+let totalReceived = 0;
+let dataChannel = null;
+
+const CHUNK_SIZE = 64 * 1024; // 64KB chunks
+
+const iceServers = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+  ]
+};
+
+// ============ UI ============
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  if (bytes < 1024*1024*1024) return (bytes/1024/1024).toFixed(1) + ' MB';
+  return (bytes/1024/1024/1024).toFixed(2) + ' GB';
+}
+
+function setSenderStatus(type, msg) {
+  const dot = document.getElementById('senderDot');
+  const text = document.getElementById('senderStatusText');
+  dot.className = 'status-dot ' + type;
+  text.textContent = msg;
+}
+
+function setReceiverStatus(type, msg) {
+  const dot = document.getElementById('receiverDot');
+  const text = document.getElementById('receiverStatusText');
+  dot.className = 'status-dot ' + type;
+  text.textContent = msg;
+}
+
+// ============ FILE SELECT ============
+const fileInput = document.getElementById('fileInput');
+const fileDrop = document.getElementById('fileDrop');
+
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files[0]) handleFile(e.target.files[0]);
+});
+
+fileDrop.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  fileDrop.classList.add('drag-over');
+});
+
+fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('drag-over'));
+
+fileDrop.addEventListener('drop', (e) => {
+  e.preventDefault();
+  fileDrop.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+
+function handleFile(file) {
+  selectedFile = file;
+  document.getElementById('fileInfo').classList.add('show');
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = formatSize(file.size);
+  document.getElementById('createOfferBtn').disabled = false;
+  setSenderStatus('waiting', '✅ تم اختيار الملف — اضغط "إنشاء رابط التواصل"');
+}
+
+// ============ SENDER ============
+async function createOffer() {
+  pc_sender = new RTCPeerConnection(iceServers);
+
+  dataChannel = pc_sender.createDataChannel('fileTransfer', {
+    ordered: true,
+  });
+
+  dataChannel.onopen = () => {
+    setSenderStatus('connected', '🟢 متصل! جاهز للإرسال');
+    document.getElementById('sendBtn').disabled = false;
+  };
+
+  dataChannel.onclose = () => setSenderStatus('', '🔴 انقطع الاتصال');
+
+  pc_sender.onicecandidate = (e) => {
+    if (!e.candidate) {
+      // ICE gathering complete
+      const offer = JSON.stringify(pc_sender.localDescription);
+      const encoded = btoa(unescape(encodeURIComponent(offer)));
+      document.getElementById('offerText').textContent = encoded;
+    }
+  };
+
+  const offer = await pc_sender.createOffer();
+  await pc_sender.setLocalDescription(offer);
+
+  document.getElementById('offerSection').style.display = 'block';
+  document.getElementById('createOfferBtn').disabled = true;
+  setSenderStatus('waiting', '⏳ في انتظار رد صديقك...');
+}
+
+async function connectWithAnswer() {
+  const encoded = document.getElementById('answerInput').value.trim();
+  if (!encoded) return showToast('❌ الصق كود الرد أولاً');
+  
+  try {
+    const answer = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+    await pc_sender.setRemoteDescription(new RTCSessionDescription(answer));
+    setSenderStatus('waiting', '⏳ جاري الاتصال...');
+  } catch(e) {
+    showToast('❌ كود خاطئ، تأكد من النسخ الكامل');
+  }
+}
+
+async function sendFile() {
+  if (!selectedFile || !dataChannel || dataChannel.readyState !== 'open') {
+    return showToast('❌ تأكد من الاتصال أولاً');
+  }
+
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+  btn.textContent = '📤 جاري الإرسال...';
+
+  // Send metadata first
+  const meta = JSON.stringify({
+    name: selectedFile.name,
+    size: selectedFile.size,
+    type: selectedFile.type
+  });
+  dataChannel.send('META:' + meta);
+
+  // Send file in chunks
+  const progressWrap = document.getElementById('progressWrap');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+  progressWrap.style.display = 'block';
+  progressText.style.display = 'block';
+
+  let offset = 0;
+  const reader = new FileReader();
+
+  function sendChunk() {
+    if (offset >= selectedFile.size) {
+      dataChannel.send('DONE');
+      btn.textContent = '✅ تم الإرسال بنجاح!';
+      setSenderStatus('connected', '✅ تم إرسال الفيديو بنجاح!');
+      progressBar.style.width = '100%';
+      progressText.textContent = 'اكتمل الإرسال ✅';
+      return;
+    }
+
+    // Wait if buffer is full
+    if (dataChannel.bufferedAmount > 16 * 1024 * 1024) {
+      setTimeout(sendChunk, 100);
+      return;
+    }
+
+    const slice = selectedFile.slice(offset, offset + CHUNK_SIZE);
+    reader.readAsArrayBuffer(slice);
+  }
+
+  reader.onload = (e) => {
+    dataChannel.send(e.target.result);
+    offset += CHUNK_SIZE;
+    const pct = Math.min(100, Math.round((offset / selectedFile.size) * 100));
+    progressBar.style.width = pct + '%';
+    progressText.textContent = `جاري الإرسال... ${pct}% — ${formatSize(Math.min(offset, selectedFile.size))} / ${formatSize(selectedFile.size)}`;
+    sendChunk();
+  };
+
+  sendChunk();
+}
+
+function copyOffer() {
+  const text = document.getElementById('offerText').textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('✅ تم نسخ الكود!'));
+}
+
+// ============ RECEIVER ============
+async function createAnswer() {
+  const encoded = document.getElementById('offerInput').value.trim();
+  if (!encoded) return showToast('❌ الصق كود صديقك أولاً');
+
+  let offer;
+  try {
+    offer = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+  } catch(e) {
+    return showToast('❌ كود خاطئ، تأكد من النسخ الكامل');
+  }
+
+  pc_receiver = new RTCPeerConnection(iceServers);
+
+  pc_receiver.ondatachannel = (e) => {
+    const channel = e.channel;
+    setReceiverStatus('waiting', '⏳ في انتظار الملف...');
+
+    channel.onmessage = (evt) => {
+      const data = evt.data;
+
+      if (typeof data === 'string' && data.startsWith('META:')) {
+        const meta = JSON.parse(data.slice(5));
+        receivedFileName = meta.name;
+        receivedFileSize = meta.size;
+        receivedChunks = [];
+        totalReceived = 0;
+        setReceiverStatus('connected', `📥 يستقبل: ${meta.name} (${formatSize(meta.size)})`);
+        return;
+      }
+
+      if (typeof data === 'string' && data === 'DONE') {
+        const blob = new Blob(receivedChunks);
+        const url = URL.createObjectURL(blob);
+        const video = document.getElementById('receivedVideo');
+        video.src = url;
+        video.style.display = 'block';
+        video.play();
+        document.getElementById('downloadBtn').style.display = 'flex';
+        document.getElementById('downloadBtn').dataset.url = url;
+        document.getElementById('downloadBtn').dataset.name = receivedFileName;
+        setReceiverStatus('connected', `✅ تم استقبال الفيديو! (${formatSize(receivedFileSize)})`);
+        return;
+      }
+
+      // Binary chunk
+      receivedChunks.push(data);
+      totalReceived += data.byteLength;
+      const pct = Math.min(100, Math.round((totalReceived / receivedFileSize) * 100));
+      setReceiverStatus('connected', `📥 جاري الاستقبال... ${pct}% — ${formatSize(totalReceived)} / ${formatSize(receivedFileSize)}`);
+    };
+
+    channel.onopen = () => setReceiverStatus('connected', '🟢 متصل! في انتظار الملف...');
+  };
+
+  pc_receiver.onicecandidate = (e) => {
+    if (!e.candidate) {
+      const answer = JSON.stringify(pc_receiver.localDescription);
+      const encoded = btoa(unescape(encodeURIComponent(answer)));
+      document.getElementById('answerText').textContent = encoded;
+      document.getElementById('answerSection').style.display = 'block';
+    }
+  };
+
+  await pc_receiver.setRemoteDescription(new RTCSessionDescription(offer));
+  const answer = await pc_receiver.createAnswer();
+  await pc_receiver.setLocalDescription(answer);
+
+  setReceiverStatus('waiting', '⏳ أرسل كود الرد لصديقك...');
+}
+
+function copyAnswer() {
+  const text = document.getElementById('answerText').textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('✅ تم نسخ الكود!'));
+}
+
+function downloadVideo() {
+  const btn = document.getElementById('downloadBtn');
+  const a = document.createElement('a');
+  a.href = btn.dataset.url;
+  a.download = btn.dataset.name || 'video.mp4';
+  a.click();
+}
+</script>
+</body>
+</html>
